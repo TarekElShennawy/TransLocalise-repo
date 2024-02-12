@@ -1,0 +1,42 @@
+﻿@model Translator_Project_Management.Models.Database.Project
+
+<h1>Create Project</h1>
+<button class="btn btn-secondary mb-5" onclick="location.href = '@Url.Action("Index", "Projects")'">Return to Projects</button>
+<form asp-action="Create" method="post">
+	<div class="container">
+		<div class="row form-group">
+			<label for="projectname">Project name:</label>
+			<input class="form-control input-sm" id="projectname" type="text" name="Name" />
+		</div>
+		<div class="row form-group">
+			<div class="form-group col-md-6">
+				<label for="startdate">Start date:</label>
+				<input id="startdate" class="form-control" type="date" name="StartDate" />
+			</div>
+			<div class="form-group col-md-6">
+				<label for="duedate">Due date:</label>
+				<input id="duedate" class="form-control" type="date" name="DueDate" />
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="description">Description:</label>
+			<textarea id="description" class="form-control" type="text" name="Description" rows="4" cols="50">Insert description of project.</textarea>
+		</div>
+		<div class="row form-group">
+			<div class="form-group col-md-6">
+				<label>Clients:</label>
+				@Html.DropDownListFor(m => m.ClientId, (IEnumerable<SelectListItem>)ViewData["clients"])
+			</div>
+			<div class="form-group col-md-6">
+				<label>Users:</label>
+				@Html.DropDownListFor(m => m.ManagerId, (IEnumerable<SelectListItem>)ViewData["managers"])
+			</div>
+		</div>
+		<div class="row form-group">
+			<label for="status">Status:</label>
+			<input id="status" class="form-control" type="text" name="Status" />
+		</div>	
+		
+		<input type="submit" class="btn btn-primary mt-5" value="Add Project" />
+	</div>
+</form>

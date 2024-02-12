@@ -1,0 +1,124 @@
+﻿@using Translator_Project_Management.Models.Presentation
+@model IEnumerable<Translator_Project_Management.Models.Presentation.ProjectDetailsViewModel>
+
+<head>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<div>
+	<h1>Projects</h1>
+	<button type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("Create", "Projects")'">Create Project</button>
+	<table class="table table-condensed table-hover">
+		<thead>
+		<tr>
+			<td scope="col">Name</td>
+			<td scope="col">Start Date</td>
+			<td scope="col">Due Date</td>
+			<td scope="col">Status</td>
+			<td scope="col">Description</td>
+			<td scope="col">Client</td>
+			<td scope="col">Manager</td>
+			<td scope="col">Files</td>
+			<td scope="col">Actions</td>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var projectPresentation in (IEnumerable<ProjectDetailsViewModel>)ViewData["projects"])
+		{
+			<tr class="accordion-header">
+				<th scope="row">@projectPresentation.Project.Name</th>
+				<td>@projectPresentation.Project.StartDate</td>
+				<td>@projectPresentation.Project.DueDate</td>
+				<td>@projectPresentation.Project.Status</td>
+				<td>@projectPresentation.Project.Description</td>
+				<td>@projectPresentation.Details.ClientName</td>
+				<td>@projectPresentation.Details.ManagerName</td>
+				<td><button class="btn btn-primary toggle-button" data-bs-target="#collapse-id-@projectPresentation.Project.Id" role="button">View</td>
+				<td>
+					<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#myModal" onclick="setProjectIdInModal('@projectPresentation.Project.Id')">Delete</button>
+					<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="myModalLabel">Are you sure you want to delete the project?</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+										<b>This will delete the project and any of its' associated files.</b>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									@using (Html.BeginForm("Delete", "Projects", FormMethod.Post))
+									{
+										<input type="hidden" name="projectId" id="projectId" value="">
+										<button type="submit" class="btn btn-danger" name="projectId">Delete</button>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</td>
+			</tr>
+
+			<tr id="collapse-id-@projectPresentation.Project.Id" class="collapse">				
+				<td colspan="9">
+				@foreach (var file in (@projectPresentation.Details.Files))
+				{
+					<div class="accordion-collapse">
+						<p>Files included:</p>	
+						<div class="container">
+							<div class="row">
+								<div class="col">
+									<p>@file.Name</p>
+								</div>
+								<div class="col">
+									<button type="button" class="btn btn-secondary">View Lines</button>
+								</div>
+								<div class="col">
+									<form enctype="multipart/form-data" asp-action="DeleteFile" method="post">
+									<input type="hidden" name="fileId" value="@file.Id" />
+									<button type="submit" class="btn btn-danger">Delete</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+				<div>
+					<form enctype="multipart/form-data" asp-action="AddFile" method="post">
+						<div class="container">
+							<div class="row">
+								<div class="col">
+									<input type="hidden" name="projectid" value="@projectPresentation.Project.Id" />
+									<input type="file" name="file" />
+								</div>
+								<div class="col">
+									<button type="submit" class="btn btn-primary">Upload file</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>					
+				</td>
+			</tr>
+		}
+		</tbody>
+	</table>	
+</div>
+
+<script>
+	const toggleButtons = document.querySelectorAll('.toggle-button');
+
+	toggleButtons.forEach(button => {
+		const targetCollapse = document.querySelector(button.dataset.bsTarget);
+		button.addEventListener('click', () => {
+			targetCollapse.classList.toggle('show');
+		});
+	});
+
+	function setProjectIdInModal(projectId)
+	{
+		$('#myModal input[name="projectId"]').val(projectId);
+	}	
+</script>

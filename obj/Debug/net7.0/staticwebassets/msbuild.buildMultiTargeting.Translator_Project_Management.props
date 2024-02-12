@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Translator_Project_Management.props" />
+</Project>
