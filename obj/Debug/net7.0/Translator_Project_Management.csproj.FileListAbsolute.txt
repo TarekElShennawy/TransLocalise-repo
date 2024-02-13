@@ -42,3 +42,4 @@ C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Man
 C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\EmmetNetSharp.dll
 C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\Esprima.dll
 C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\Jint.dll
+C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\Newtonsoft.Json.dll

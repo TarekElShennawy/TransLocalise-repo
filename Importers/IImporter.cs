@@ -2,9 +2,11 @@
 
 namespace Translator_Project_Management.Importers
 {
-	interface IImporter
+	public interface IImporter : IDisposable
 	{		
 		public bool IsValidImporter(IFormFile file);
+
+		public LocFile ParseFile(IFormFile file);
 
 		public void UploadToDb(int projectId, LocFile file);
 	}

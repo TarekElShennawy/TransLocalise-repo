@@ -1,42 +1,51 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using Translator_Project_Management.Database;
 using Translator_Project_Management.Models.Localisation;
+using Translator_Project_Management.Repositories.Interfaces;
 
 namespace Translator_Project_Management.Importers.XML
 {
-	public class JSONImporter : IImporter
+	public class JSONImporter : ImporterBaseClass
 	{
-
-		private string content;
-
-		private string fileType = "json";
-
-		public bool IsValidImporter(IFormFile file)
+		public JSONImporter(IFileRepository fileRepository, ILanguageRepository languageRepository, ILineRepository lineRepository, MySqlDatabase db)
+		: base(fileRepository, languageRepository, lineRepository, db)
 		{
-			if (file == null)
+			_fileRepository = fileRepository;
+			_languageRepository = languageRepository;
+			_lineRepository = lineRepository;
+			_db = db;
+
+			fileType = "json";
+		}
+
+		public override LocFile ParseFile(IFormFile file)
+		{
+			LocFile jsonFile = new LocFile();
+
+			jsonFile.Name = file.FileName.Split('.')[0];
+			//Go through the file's lines
+			using (var stream = file.OpenReadStream())
 			{
-				//file is not valid to be imported by JSON importer as it is null or not a JSON
-				return false;
+				using (var reader = new StreamReader(stream))
+				{
+					string fileContents = reader.ReadToEnd();
+
+					if(!string.IsNullOrWhiteSpace(fileContents))
+					{
+						List<LocLine> locLines = JsonConvert.DeserializeObject<List<LocLine>>(fileContents);
+
+						if(locLines != null && locLines.Any())
+						{
+							foreach (LocLine line in locLines)
+							{
+								jsonFile.Lines.Add(line);
+							}
+						}						
+					}					
+				}
 			}
 
-			//Check if the file-type is JSON
-
-			//If true, parse file
-			return true;
+			return jsonFile;
 		}
-
-		public void ParseFile(string content)
-		{
-			//Go through the file's lines
-
-			//After lines are parsed, upload to DB
-		}
-
-		public void UploadToDb(int projectId, LocFile file)
-		{
-			//Check if database contains line
-
-			//If not, add the line's text to the DB with the associated file's ID and language ID
-		}
-
 	}
 }

@@ -1,4 +1,5 @@
 using Translator_Project_Management.Database;
+using Translator_Project_Management.Importers;
 using Translator_Project_Management.Importers.XML;
 using Translator_Project_Management.Repositories;
 using Translator_Project_Management.Repositories.Interfaces;
@@ -26,7 +27,8 @@ builder.Services.AddTransient<ILanguageRepository, LanguageRepository>();
 builder.Services.AddTransient<ILineRepository, LineRepository>();
 
 //Importer services
-builder.Services.AddTransient<XLIFFImporter>();
+builder.Services.AddTransient<IImporter, XLIFFImporter>();
+builder.Services.AddTransient<IImporter, JSONImporter>();
 
 var app = builder.Build();
 

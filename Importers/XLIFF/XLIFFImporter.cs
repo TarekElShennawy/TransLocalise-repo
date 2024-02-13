@@ -1,45 +1,26 @@
-﻿using MySqlConnector;
-using System.Transactions;
-using System.Web.WebPages;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using Translator_Project_Management.Database;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Localisation;
-using Translator_Project_Management.Repositories;
 using Translator_Project_Management.Repositories.Interfaces;
 
 namespace Translator_Project_Management.Importers.XML
 {
-	public class XLIFFImporter : IImporter
+	public class XLIFFImporter : ImporterBaseClass
 	{
-		private string fileType = "xliff";	
-
-		private IFileRepository _fileRepository;
-		private ILanguageRepository _languageRepository;
-		private ILineRepository _lineRepository;
-		private MySqlDatabase _db;
-
-        public XLIFFImporter(IFileRepository fileRepository, ILanguageRepository languageRepository, ILineRepository lineRepository, MySqlDatabase db)
-        {
+		public XLIFFImporter(IFileRepository fileRepository, ILanguageRepository languageRepository, ILineRepository lineRepository, MySqlDatabase db)
+		: base(fileRepository, languageRepository, lineRepository, db)
+		{
 			_fileRepository = fileRepository;
 			_languageRepository = languageRepository;
 			_lineRepository = lineRepository;
 			_db = db;
+
+			fileType = "xliff";
 		}
 
-        public bool IsValidImporter(IFormFile file)
-		{
-			if (file == null || !file.FileName.Contains(fileType))
-			{
-				//File is not XLIFF
-				return false;
-			}
-
-			return true;				
-		}
-
-		public LocFile ParseFile(IFormFile file)
+		public override LocFile ParseFile(IFormFile file)
 		{
 			LocFile xliffFile = new LocFile();
 
@@ -60,22 +41,37 @@ namespace Translator_Project_Management.Importers.XML
 						//Parsing file metadata
 						foreach (XElement fileElement in doc.Descendants("file"))
 						{
-							xliffFile.Name = fileElement.Attribute("original")?.Value;
+							//Setting the file name based on either the file name attribute in the file element or the actual file's name
+							string[] xliffFileName = fileElement.Attribute("original")?.Value.Split('.');
 
-							//Parsing unit data
-							foreach (XElement unitElement in doc.Descendants("unit"))
+							if (!string.IsNullOrWhiteSpace(xliffFileName[0]))
 							{
-								LocLine line = new LocLine()
-								{
-									LineId = unitElement.Attribute("id")?.Value,
-									SourceLang = fileElement.Attribute("source-language")?.Value,
-									TargetLang = fileElement.Attribute("target-language")?.Value,
-									SourceText = unitElement.Element("source")?.Value,
-									TargetText = unitElement.Element("target")?.Value
-								};
-
-								xliffFile.Lines.Add(line);
+								xliffFile.Name = xliffFileName[0];
 							}
+							else
+							{
+								xliffFile.Name = file.FileName.Split('.')[0];
+							}
+
+							IEnumerable<XElement> units = doc.Descendants("unit");
+
+							if(units != null && units.Any())
+							{
+								//Parsing unit data
+								foreach (XElement unitElement in units)
+								{
+									LocLine line = new LocLine()
+									{
+										LineId = unitElement.Attribute("id")?.Value,
+										SourceLang = fileElement.Attribute("source-language")?.Value,
+										TargetLang = fileElement.Attribute("target-language")?.Value,
+										SourceText = unitElement.Element("source")?.Value,
+										TargetText = unitElement.Element("target")?.Value
+									};
+
+									xliffFile.Lines.Add(line);
+								}
+							}							
 						}						
 					}
 				}
@@ -87,67 +83,6 @@ namespace Translator_Project_Management.Importers.XML
 
 			//After the file is parsed, upload to DB
 			return xliffFile;
-		}
-
-		public void UploadToDb(int projectId, LocFile file)
-		{
-			//Get languages
-			List<Language> languages = _languageRepository.GetAll().ToList();
-			//Add file entry in files table
-			using(var transaction = _db.Connection.BeginTransaction())
-			{
-				try
-				{
-					Models.Database.File dbFile = new Models.Database.File()
-					{
-						ProjectId = projectId,
-						Name = file.Name,
-						Type = "Xliff",
-						Status = "Not started"
-					};
-
-					int fileId = _fileRepository.Insert(dbFile, transaction);
-
-					foreach (LocLine line in file.Lines)
-					{
-						if (!String.IsNullOrWhiteSpace(line.SourceText) && !String.IsNullOrWhiteSpace(line.SourceLang))
-						{
-							Line sourceLine = new Line()
-							{
-								LineId = line.LineId,
-								FileId = fileId,
-								Text = line.SourceText,
-								LangId = languages.Where(l => l.Code.Equals(line.SourceLang)).FirstOrDefault().Id,
-								IsTranslation = false
-							};
-
-							_lineRepository.Insert(sourceLine, transaction);
-						}
-
-						if (!String.IsNullOrWhiteSpace(line.TargetText) && !String.IsNullOrWhiteSpace(line.TargetLang))
-						{
-							Line translationLine = new Line()
-							{
-								LineId = line.LineId,
-								FileId = fileId,
-								Text = line.TargetText,
-								LangId = languages.Where(l => l.Code.Equals(line.TargetLang)).FirstOrDefault().Id,
-								IsTranslation = true
-							};
-
-							_lineRepository.Insert(translationLine, transaction);
-						}						
-					}
-
-					// Committing all inserts at once after the loop
-					transaction.Commit();
-				}
-				catch
-				{
-					transaction.Rollback();
-					throw;					
-				}
-			}
 		}
 	}
 }

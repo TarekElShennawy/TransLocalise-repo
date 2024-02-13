@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Translator_Project_Management.Importers.XML;
+using Translator_Project_Management.Database;
+using Translator_Project_Management.Importers;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Localisation;
 using Translator_Project_Management.Models.Presentation;
@@ -8,22 +9,29 @@ using Translator_Project_Management.Repositories.Interfaces;
 
 namespace Translator_Project_Management.Controllers
 {
-    public class ProjectsController : Controller
+	public class ProjectsController : Controller
     {
-        private readonly XLIFFImporter _importer;
+        public IEnumerable<IImporter> _importers;
 
         private readonly IProjectRepository _projectRepository;
 		private readonly IClientRepository _clientRepository;
 		private readonly IUserRepository _userRepository;
         private readonly IFileRepository _fileRepository;
+        private readonly ILineRepository _lineRepository;
+        private readonly ILanguageRepository _languageRepository;
+        private readonly MySqlDatabase _db;
 
-        public ProjectsController(XLIFFImporter importer, IProjectRepository projectRepository, IUserRepository userRepository, IClientRepository clientRepository, IFileRepository fileRepository)
+        public ProjectsController(IEnumerable<IImporter> importers, MySqlDatabase db, IProjectRepository projectRepository, IUserRepository userRepository,
+            IClientRepository clientRepository, IFileRepository fileRepository, ILineRepository lineRepository, ILanguageRepository languageRepository)
         {
             _projectRepository = projectRepository;
             _clientRepository = clientRepository;
             _userRepository = userRepository;
             _fileRepository = fileRepository;
-            _importer = importer;
+            _lineRepository = lineRepository;
+            _languageRepository = languageRepository;
+            _db = db;
+            _importers = importers;
         }
 
         // GET: ProjectsController
@@ -116,13 +124,34 @@ namespace Translator_Project_Management.Controllers
 
         public ActionResult AddFile([FromForm] IFormFile file, int projectId)
         {
-            if(_importer.IsValidImporter(file))
+            IImporter selectedImporter = null;
+
+            foreach(IImporter importer in _importers)
             {
-                LocFile parsedFile = _importer.ParseFile(file);
-				_importer.UploadToDb(projectId, parsedFile);
+                if(importer.IsValidImporter(file))
+                {
+                    selectedImporter = importer;
+                    break;
+                }
+            }
+
+            if(selectedImporter != null) {
+
+                try
+                {
+					using (selectedImporter)
+					{
+					    LocFile parsedFile = selectedImporter.ParseFile(file);
+					    selectedImporter.UploadToDb(projectId, parsedFile);
+					}
+				}
+                catch
+                {
+                
+                }
 			}
 
-            return RedirectToAction("Index");
+			return RedirectToAction("Index");
         }
 
         public ActionResult DeleteFile([FromForm] int fileId)
