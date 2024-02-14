@@ -3,12 +3,12 @@ using Translator_Project_Management.Importers;
 using Translator_Project_Management.Importers.XML;
 using Translator_Project_Management.Repositories;
 using Translator_Project_Management.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
+	.AddJsonFile("appsettings.json")
+	.Build();
 
 var connectionString = configuration.GetConnectionString("MySqlDatabase");
 
@@ -49,6 +49,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Projects}/{action=Index}/{id?}");
 
 app.Run();

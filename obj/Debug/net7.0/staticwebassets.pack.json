@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\Translator_Project_Management.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\css\\projects.css",
+      "PackagePath": "staticwebassets\\css\\projects.css"
+    },
+    {
       "Id": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
