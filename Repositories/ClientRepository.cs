@@ -1,5 +1,4 @@
-﻿using MySqlConnector;
-using Translator_Project_Management.Database;
+﻿using Translator_Project_Management.Database;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Repositories.Interfaces;
 
@@ -7,99 +6,44 @@ namespace Translator_Project_Management.Repositories
 {
 	public class ClientRepository : IClientRepository
 	{
-		private static string c_GetAllClientsCmd = "SELECT * FROM clients";
+		private readonly LocDbContext _dbContext;
 
-		private static string c_GetClientForProjectCmd = @"SELECT * FROM clients WHERE id = @id";
-
-		private readonly MySqlDatabase _db;
-
-        public ClientRepository(MySqlDatabase db)
+        public ClientRepository(LocDbContext dbContext)
         {
-			_db = db;
+			_dbContext = dbContext;
         }
 
         public void Delete(int clientId)
 		{
-			throw new NotImplementedException();
+			Client client = _dbContext.Clients.Find(clientId);
+
+			if(client != null)
+			{
+				_dbContext.Clients.Remove(client);
+				_dbContext.SaveChanges();
+			}
 		}
 
 		public IEnumerable<Client> GetAll()
 		{
-			List<Client> clients = new List<Client>();
-
-			MySqlCommand cmd = this._db.Connection.CreateCommand();
-			cmd.CommandText = c_GetAllClientsCmd;
-
-			using (MySqlDataReader reader = cmd.ExecuteReader())
-			{
-				if (!reader.HasRows)
-				{
-					//returns an empty list if no projects exist in table
-					return null;
-				}
-
-				while (reader.Read())
-				{
-					Client client = new Client();
-
-					client.Id = reader.GetInt32(0);
-					client.Name = reader.GetString(1);
-					client.ContactName = reader.GetString(2);
-					client.Email = reader.GetString(3);
-					client.PhoneNumber = reader.GetString(4);
-					client.BillingAddress = reader.GetString(5);
-
-					clients.Add(client);
-				}
-			}
-
-			return clients;
-		}
-
-		public Client GetClientForProject(int clientId)
-		{
-			Client projectClient = new Client();
-
-			MySqlCommand cmd = this._db.Connection.CreateCommand();
-			cmd.CommandText = c_GetClientForProjectCmd;
-
-			cmd.Parameters.AddWithValue("@id", clientId);
-
-			using (MySqlDataReader reader = cmd.ExecuteReader())
-			{
-				if(!reader.HasRows)
-				{
-					//No clients are associated with the project
-					return null;
-				}
-
-				while(reader.Read())
-				{
-					projectClient.Id = reader.GetInt32(0);
-					projectClient.Name = reader.GetString(1);
-					projectClient.ContactName = reader.GetString(2);
-					projectClient.Email = reader.GetString(3);
-					projectClient.PhoneNumber = reader.GetString(4);
-					projectClient.BillingAddress = reader.GetString(5);
-				}
-			}
-
-			return projectClient;
+			return _dbContext.Clients;
 		}
 
 		public Client GetById(int clientId)
 		{
-			throw new NotImplementedException();
-		}
+            return _dbContext.Clients.Find(clientId);
+        }
 
 		public void Insert(Client client)
 		{
-			throw new NotImplementedException();
+			_dbContext.Add(client);
+			_dbContext.SaveChanges();
 		}
 
 		public void Update(Client client)
 		{
-			throw new NotImplementedException();
+			_dbContext.Update(client);
+			_dbContext.SaveChanges();
 		}
 	}
 }

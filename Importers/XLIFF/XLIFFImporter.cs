@@ -1,6 +1,5 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
-using Translator_Project_Management.Database;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Localisation;
 using Translator_Project_Management.Repositories.Interfaces;
@@ -9,13 +8,14 @@ namespace Translator_Project_Management.Importers.XML
 {
 	public class XLIFFImporter : ImporterBaseClass
 	{
-		public XLIFFImporter(IFileRepository fileRepository, ILanguageRepository languageRepository, ILineRepository lineRepository, MySqlDatabase db)
-		: base(fileRepository, languageRepository, lineRepository, db)
+		public XLIFFImporter(IFileRepository fileRepository, ILanguageRepository languageRepository,
+			ILineRepository<SourceLine> sourceLineRepository, ILineRepository<TransLine> translationRepository)
+		: base(fileRepository, languageRepository, sourceLineRepository, translationRepository)
 		{
 			_fileRepository = fileRepository;
 			_languageRepository = languageRepository;
-			_lineRepository = lineRepository;
-			_db = db;
+			_sourceLineRepository = sourceLineRepository;
+			_translationRepository = translationRepository;
 
 			fileType = "xliff";
 		}

@@ -1,24 +1,20 @@
-﻿using MySqlConnector;
-using Translator_Project_Management.Models.Database;
+﻿using Translator_Project_Management.Models.Database;
 
 namespace Translator_Project_Management.Repositories.Interfaces
 {
-	public interface ILineRepository
+	public interface ILineRepository<TLine> where TLine : Line
 	{
-		//Gets all source lines
-		IEnumerable<Line> GetAllSourceLines();
+		//Gets all lines
+		IEnumerable<TLine> GetAll();
 
-		//Gets all translations
-		IEnumerable<Line> GetAllTranslations();
+		//Gets lines for a specific file
+		IEnumerable<TLine> GetForFile(int fileId);
 
-		//Gets line by ID
-		Line GetById(int lineId);
+		//Inserts a new line record and returns the ID of it
+		int Insert(TLine line);
 
-		//Inserts a new line record
-		void Insert(Line line, MySqlTransaction transaction);
-
-		//Updates a line record
-		void Update(Line line);
+        //Updates a line record
+        void Update(TLine line);
 
 		//Deletes a line record
 		void Delete(int lineId);

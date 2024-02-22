@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Translator_Project_Management.Database;
 using Translator_Project_Management.Importers;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Localisation;
@@ -9,6 +10,7 @@ using Translator_Project_Management.Repositories.Interfaces;
 
 namespace Translator_Project_Management.Controllers
 {
+    [Authorize(Roles = "Manager")] //Projects is only accessible on user log-in for managers
 	public class ProjectsController : Controller
     {
         public IEnumerable<IImporter> _importers;
@@ -17,49 +19,62 @@ namespace Translator_Project_Management.Controllers
 		private readonly IClientRepository _clientRepository;
 		private readonly IUserRepository _userRepository;
         private readonly IFileRepository _fileRepository;
-        private readonly ILineRepository _lineRepository;
-        private readonly ILanguageRepository _languageRepository;
-        private readonly MySqlDatabase _db;
+		private readonly ILanguageRepository _languageRepository;
+        private readonly ILineRepository<SourceLine> _sourceLineRepository;
+        private readonly IUserSourceLineMappingRepository _userToSourceMappingRepository;
 
-        public ProjectsController(IEnumerable<IImporter> importers, MySqlDatabase db, IProjectRepository projectRepository, IUserRepository userRepository,
-            IClientRepository clientRepository, IFileRepository fileRepository, ILineRepository lineRepository, ILanguageRepository languageRepository)
+        private readonly UserManager<User> _userManager;
+
+        public ProjectsController(UserManager<User> userManager, IEnumerable<IImporter> importers, IProjectRepository projectRepository, IUserRepository userRepository,
+            IClientRepository clientRepository, IFileRepository fileRepository, ILanguageRepository languageRepository, ILineRepository<SourceLine> sourceLineRepository,
+			IUserSourceLineMappingRepository userToSourceMappingRepository)
         {
             _projectRepository = projectRepository;
             _clientRepository = clientRepository;
             _userRepository = userRepository;
             _fileRepository = fileRepository;
-            _lineRepository = lineRepository;
             _languageRepository = languageRepository;
-            _db = db;
-            _importers = importers;
+            _sourceLineRepository = sourceLineRepository;
+            _userToSourceMappingRepository = userToSourceMappingRepository;
+
+			_importers = importers;
+
+            _userManager = userManager;
         }
 
         // GET: ProjectsController
         public ActionResult Index() 
         {
-            List<Project> allProjects = _projectRepository.GetAll().ToList();
             List<ProjectDetailsViewModel> projectVMs = new List<ProjectDetailsViewModel>();
 
-            foreach(Project project in allProjects)
-            {
-                List<Models.Database.File> projectFiles = _fileRepository.GetByProjectId(project.Id).ToList();                
+            List<Project> allProjects = _projectRepository.GetAll().ToList();                
 
-				ProjectDetailsViewModel projectVM = new ProjectDetailsViewModel()
+            foreach (Project project in allProjects)
+            {
+                List<Models.Database.File> projectFiles = _fileRepository.GetByProjectId(project.Id).ToList();
+
+                ProjectDetailsViewModel projectVM = new ProjectDetailsViewModel()
                 {
                     Project = project,
                     Details = new ProjectDetails()
                     {
-						ClientName = _clientRepository.GetClientForProject(project.ClientId).Name,
-						ManagerName = _userRepository.GetManagerForProject(project.ManagerId).FirstName,
+                        ClientName = _clientRepository.GetById(project.ClientId).Name,
+                        ManagerName = _userRepository.GetManagerById(project.ManagerId).FirstName,
                         Files = projectFiles,
                         FileCount = projectFiles.Count()
-					}                    
+                    }
                 };
 
-				projectVMs.Add(projectVM);
-			}
+                projectVMs.Add(projectVM);
+            }           
 
             ViewData["projects"] = projectVMs;
+
+			// Get all users
+			List<User> allUsers = _userRepository.GetAll().ToList();
+
+			// Create SelectList from users
+			ViewData["users"] = new SelectList(allUsers, "Id", "FirstName");
 
 			return View();
         }
@@ -74,8 +89,8 @@ namespace Translator_Project_Management.Controllers
         // GET: ProjectsController/Create
         public ActionResult Create()
         {
+            ViewData["projectStatuses"] = new SelectList(GetProjectStatuses(), "Status", "Status");
             ViewData["clients"] = new SelectList(_clientRepository.GetAll().ToList(), "Id", "Name");
-            ViewData["managers"] = new SelectList(_userRepository.GetAllManagers().ToList(), "Id", "FirstName");
 
             return View();
         }
@@ -85,6 +100,8 @@ namespace Translator_Project_Management.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([FromForm] Project project)
         {
+            project.ManagerId = _userManager.GetUserId(this.User);
+
             _projectRepository.Insert(project);
 
             //Redirect to the table of projects after creating a new project
@@ -122,6 +139,17 @@ namespace Translator_Project_Management.Controllers
             return RedirectToAction("Index");
         }
 
+        private static List<ProjectStatus> GetProjectStatuses()
+        {
+            return new List<ProjectStatus>
+            {
+                new ProjectStatus { Id = 1, Status = "Not Started"},
+                new ProjectStatus { Id = 2, Status = "In Progress"},
+                new ProjectStatus { Id = 3, Status = "Completed"},
+                new ProjectStatus { Id = 4, Status = "On Hold"}
+            };
+        }
+
         public ActionResult AddFile([FromForm] IFormFile file, int projectId)
         {
             IImporter selectedImporter = null;
@@ -149,7 +177,7 @@ namespace Translator_Project_Management.Controllers
                 {
                 
                 }
-			}
+			}		
 
 			return RedirectToAction("Index");
         }
@@ -159,6 +187,19 @@ namespace Translator_Project_Management.Controllers
             _fileRepository.Delete(fileId);
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult SetLinesToUser([FromForm] int fileId, string selectedUserId)
+        {
+            List<int> sourceLines = _sourceLineRepository.GetForFile(fileId).Select(sl => sl.Id).ToList();
+
+            if(!string.IsNullOrEmpty(selectedUserId) && sourceLines != null && sourceLines.Any())
+            { 
+                _userToSourceMappingRepository.AssignSourceLinesToUser(selectedUserId, sourceLines);
+			}
+
+			return RedirectToAction("Index");
         }
     }
 }

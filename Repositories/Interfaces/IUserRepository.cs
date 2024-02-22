@@ -11,7 +11,10 @@ namespace Translator_Project_Management.Repositories.Interfaces
         IEnumerable<User> GetAllManagers();
 
         //Gets user by ID
-        User GetById(int userId);
+        User GetById(string userId);
+
+        //Gets user by Email (used for authentication and authorisation)
+        User GetByEmail(string email);
 
         //Inserts a new user record
         void Insert(User user);
@@ -20,8 +23,9 @@ namespace Translator_Project_Management.Repositories.Interfaces
         void Update(User user);
 
         //Deletes a user record
-        void Delete(int userId);
+        void Delete(string userId);
 
-        User GetManagerForProject(int userId);
+        //Gets manager record by their ID
+        User GetManagerById(string userId);
     }
 }

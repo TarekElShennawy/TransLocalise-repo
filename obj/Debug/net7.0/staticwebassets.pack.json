@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\js\\ProjectDetails.js",
+      "PackagePath": "staticwebassets\\js\\ProjectDetails.js"
+    },
+    {
       "Id": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

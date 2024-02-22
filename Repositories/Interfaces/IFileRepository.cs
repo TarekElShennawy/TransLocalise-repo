@@ -1,6 +1,4 @@
-﻿using MySqlConnector;
-
-namespace Translator_Project_Management.Repositories.Interfaces
+﻿namespace Translator_Project_Management.Repositories.Interfaces
 {
 	public interface IFileRepository
 	{
@@ -11,7 +9,7 @@ namespace Translator_Project_Management.Repositories.Interfaces
         IEnumerable<Models.Database.File> GetByProjectId(int projectId);
 
 		//Inserts a new file record and returns the FileId
-		int Insert(Models.Database.File file, MySqlTransaction transaction);
+		int Insert(Models.Database.File file);
 
 		//Updates a file record
 		void Update(Models.Database.File file);

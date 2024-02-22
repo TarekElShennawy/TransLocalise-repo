@@ -12,70 +12,16 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\Tarek\.nuget\packages\" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Icon.png" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Icon.png')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Icon.png</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\README.md" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\README.md')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>README.md</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\actionUtils.min.js" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\actionUtils.min.js')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Scripts\actionUtils.min.js</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\cssMatcher.min.js" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\cssMatcher.min.js')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Scripts\cssMatcher.min.js</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\emmet.min.js" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\emmet.min.js')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Scripts\emmet.min.js</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\htmlMatcher.min.js" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\htmlMatcher.min.js')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Scripts\htmlMatcher.min.js</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\mathExpression.min.js" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\mathExpression.min.js')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Scripts\mathExpression.min.js</Link>
-    </Content>
-    <Content Include="$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\scanner.min.js" Condition="Exists('$(NuGetPackageRoot)emmetnetsharp\1.0.1\contentFiles\any\netstandard2.0\Scripts\scanner.min.js')">
-      <NuGetPackageId>EmmetNetSharp</NuGetPackageId>
-      <NuGetPackageVersion>1.0.1</NuGetPackageVersion>
-      <NuGetItemType>Content</NuGetItemType>
-      <Pack>false</Pack>
-      <Private>False</Private>
-      <Link>Scripts\scanner.min.js</Link>
-    </Content>
-  </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\7.0.16\buildTransitive\net6.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\7.0.16\buildTransitive\net6.0\Microsoft.EntityFrameworkCore.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore.design\7.0.16\build\net6.0\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore.design\7.0.16\build\net6.0\Microsoft.EntityFrameworkCore.Design.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.aspnetcore.identity.ui\7.0.16\build\Microsoft.AspNetCore.Identity.UI.props" Condition="Exists('$(NuGetPackageRoot)microsoft.aspnetcore.identity.ui\7.0.16\build\Microsoft.AspNetCore.Identity.UI.props')" />
+    <Import Project="$(NuGetPackageRoot)entityframework\6.4.4\buildTransitive\netcoreapp3.0\EntityFramework.props" Condition="Exists('$(NuGetPackageRoot)entityframework\6.4.4\buildTransitive\netcoreapp3.0\EntityFramework.props')" />
+  </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">C:\Users\Tarek\.nuget\packages\microsoft.codeanalysis.analyzers\3.3.3</PkgMicrosoft_CodeAnalysis_Analyzers>
+    <PkgMicrosoft_CodeAnalysis_AnalyzerUtilities Condition=" '$(PkgMicrosoft_CodeAnalysis_AnalyzerUtilities)' == '' ">C:\Users\Tarek\.nuget\packages\microsoft.codeanalysis.analyzerutilities\3.3.0</PkgMicrosoft_CodeAnalysis_AnalyzerUtilities>
+    <PkgMicrosoft_EntityFrameworkCore_Tools Condition=" '$(PkgMicrosoft_EntityFrameworkCore_Tools)' == '' ">C:\Users\Tarek\.nuget\packages\microsoft.entityframeworkcore.tools\7.0.16</PkgMicrosoft_EntityFrameworkCore_Tools>
+    <PkgEntityFramework Condition=" '$(PkgEntityFramework)' == '' ">C:\Users\Tarek\.nuget\packages\entityframework\6.4.4</PkgEntityFramework>
+  </PropertyGroup>
 </Project>

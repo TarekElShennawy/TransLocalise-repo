@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "p7rv6c8fVov/MjfHoSPKFrYo/cH7EfSpO4jIbGJu65Y=",
+  "Hash": "Dyx+LxSO98oOrgaSrhEBBMGyNs+XRjnauFXPTYdbIIw=",
   "Source": "Translator_Project_Management",
   "BasePath": "_content/Translator_Project_Management",
   "Mode": "Default",
@@ -1120,6 +1120,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\js\\ProjectDetails.js",
+      "SourceId": "Translator_Project_Management",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\",
+      "BasePath": "_content/Translator_Project_Management",
+      "RelativePath": "js/ProjectDetails.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\ProjectDetails.js"
     },
     {
       "Identity": "C:\\Users\\Tarek\\source\\repos\\Translator_Project_Management\\Translator_Project_Management\\wwwroot\\js\\site.js",

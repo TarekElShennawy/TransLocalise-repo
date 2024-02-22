@@ -1,5 +1,4 @@
 ﻿using Translator_Project_Management.Models.Database;
-using Translator_Project_Management.Models.Presentation;
 
 namespace Translator_Project_Management.Repositories.Interfaces
 {
@@ -19,5 +18,8 @@ namespace Translator_Project_Management.Repositories.Interfaces
 
         //Deletes a project record
         void Delete(int projectId);
+
+        //Gets projects for a manager
+        IEnumerable<Project> GetProjectsForManager(int managerId);
     }
 }

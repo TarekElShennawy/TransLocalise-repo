@@ -18,7 +18,5 @@ namespace Translator_Project_Management.Repositories.Interfaces
 
 		//Deletes a client record
 		void Delete(int clientId);
-
-		Client GetClientForProject(int projectId);
 	}
 }
