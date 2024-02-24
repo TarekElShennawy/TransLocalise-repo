@@ -1,6 +1,5 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
 using Translator_Project_Management.Database;
-using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Repositories.Interfaces;
 using File = Translator_Project_Management.Models.Database.File;
 
@@ -25,17 +24,17 @@ namespace Translator_Project_Management.Repositories
             }
 		}
 
-		public IEnumerable<Models.Database.File> GetAll()
+		public IQueryable<File> GetAll()
 		{
-			return _dbContext.Files;
+			return _dbContext.Files.Include(f => f.SourceLines);
 		}
 
-		public IEnumerable<Models.Database.File> GetByProjectId(int projectId)
+		public IQueryable<File> GetById(int fileId)
 		{
-			return _dbContext.Files.Where(f => f.ProjectId.Equals(projectId));
+			return _dbContext.Files.Where(f => f.Id.Equals(fileId));
 		}
 
-		public int Insert(Models.Database.File file)
+		public int Insert(File file)
 		{
 			_dbContext.Files.Add(file);
 			_dbContext.SaveChanges();

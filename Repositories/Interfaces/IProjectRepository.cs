@@ -5,7 +5,7 @@ namespace Translator_Project_Management.Repositories.Interfaces
     public interface IProjectRepository
     {
         //Gets all projects
-        IEnumerable<Project> GetAll();
+        IQueryable<Project> GetAll();
 
         //Gets project by ID
         Project GetById(int projectId);
@@ -18,8 +18,5 @@ namespace Translator_Project_Management.Repositories.Interfaces
 
         //Deletes a project record
         void Delete(int projectId);
-
-        //Gets projects for a manager
-        IEnumerable<Project> GetProjectsForManager(int managerId);
     }
 }

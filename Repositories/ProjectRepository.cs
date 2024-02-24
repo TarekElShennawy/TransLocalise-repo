@@ -1,4 +1,5 @@
-﻿using Translator_Project_Management.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using Translator_Project_Management.Database;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Repositories.Interfaces;
 
@@ -18,9 +19,10 @@ namespace Translator_Project_Management.Repositories
 			return _dbContext.Projects.Find(projectId);
 		}
 
-		public IEnumerable<Project> GetAll()
+		public IQueryable<Project> GetAll()
 		{
 			return _dbContext.Projects;
+							
 		}
 
         public void Insert(Project project)
@@ -44,10 +46,5 @@ namespace Translator_Project_Management.Repositories
 				_dbContext.SaveChanges();
 			}
 		}
-
-        public IEnumerable<Project> GetProjectsForManager(int managerId)
-        {
-			return _dbContext.Projects.Where(p => p.ManagerId.Equals(managerId));
-        }
     }
 }

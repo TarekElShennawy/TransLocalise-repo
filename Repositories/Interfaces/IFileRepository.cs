@@ -1,18 +1,20 @@
-﻿namespace Translator_Project_Management.Repositories.Interfaces
+﻿using File = Translator_Project_Management.Models.Database.File;
+
+namespace Translator_Project_Management.Repositories.Interfaces
 {
 	public interface IFileRepository
 	{
 		//Gets all files
-		IEnumerable<Models.Database.File> GetAll();
+		IQueryable<File> GetAll();
 
-        //Gets files by project ID
-        IEnumerable<Models.Database.File> GetByProjectId(int projectId);
+		//Gets file by ID
+		IQueryable<File> GetById(int fileId);
 
 		//Inserts a new file record and returns the FileId
-		int Insert(Models.Database.File file);
+		int Insert(File file);
 
 		//Updates a file record
-		void Update(Models.Database.File file);
+		void Update(File file);
 
 		//Deletes a file record
 		void Delete(int fileId);

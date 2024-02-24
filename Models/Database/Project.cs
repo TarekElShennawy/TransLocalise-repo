@@ -26,12 +26,12 @@ namespace Translator_Project_Management.Models.Database
         [Column("client_id")]        
         public int ClientId { get; set; }
 
+		/// <summary>
+		/// Navigation property for the Manager (of type User) relationship
+		/// </summary>
 		[ForeignKey("ManagerId")]
 		public virtual User Manager { get; set; }
-
-        /// <summary>
-        /// Navigation property for the Manager (of type User) relationship
-        /// </summary>
+       
         [Required]
         [Column("manager_id")]        
         public string ManagerId { get; set; }
