@@ -8,8 +8,6 @@
 	}
 };
 
-/*console.log(document.querySelectorAll('.toggle-button'));*/
-
 //Getting the "View projects" buttons
 const toggleButtons = document.querySelectorAll('.toggle-button');
 

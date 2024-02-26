@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using Translator_Project_Management.Database;
 using Translator_Project_Management.Repositories.Interfaces;
 using File = Translator_Project_Management.Models.Database.File;
@@ -36,11 +37,16 @@ namespace Translator_Project_Management.Repositories
 
 		public int Insert(File file)
 		{
-			_dbContext.Files.Add(file);
-			_dbContext.SaveChanges();
+			if(!_dbContext.Files.Any(f => f.Name.Equals(file.Name) && f.Type.Equals(file.Type))) //Checking whether a file with the same name and type is in the DB already.
+			{
+				_dbContext.Files.Add(file);
+				_dbContext.SaveChanges();
 
-			return file.Id;
-		}
+				return file.Id;
+			}
+				//The method returns the file ID and we know the file exists, therefore return the Id of the file that is already in DB
+				return _dbContext.Files.FirstOrDefault(f => f.Name.Equals(file.Name) && f.Type.Equals(file.Type)).Id;
+			}
 
 		public void Update(Models.Database.File file)
 		{

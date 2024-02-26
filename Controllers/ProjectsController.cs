@@ -171,11 +171,11 @@ namespace Translator_Project_Management.Controllers
 									   .Include(f => f.SourceLines)
 									   .FirstOrDefault();
 
-			if(file != null)
+			if(file != null && !string.IsNullOrEmpty(selectedUserId))
 			{
 				List<int> sourceLineIds = file.SourceLines.Select(sl => sl.Id).ToList();
 
-				if (!string.IsNullOrEmpty(selectedUserId) && sourceLineIds != null && sourceLineIds.Any())
+				if (sourceLineIds != null && sourceLineIds.Any())
 				{
 					_userToSourceMappingRepository.AssignSourceLinesToUser(selectedUserId, sourceLineIds);
 				}

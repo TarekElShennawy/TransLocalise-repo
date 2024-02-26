@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
 using Translator_Project_Management.Database;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Repositories.Interfaces;
@@ -38,12 +38,11 @@ namespace Translator_Project_Management.Repositories
 			}
 		}
 
-		public IEnumerable<SourceLine> GetUserSourceLines(string userId)
+		public IQueryable<UserSourceLineMapping> GetUserSourceLineMappings(string userId)
 		{
 			return _dbContext.Users.Include(u => u.UserSourceLineMappings)
 								   .Where(u => u.Id.Equals(userId))
-								   .SelectMany(u => u.UserSourceLineMappings)
-								   .Select(m => m.SourceLine);
+								   .SelectMany(u => u.UserSourceLineMappings);								   
 		}
 	}
 }

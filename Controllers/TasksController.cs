@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Presentation;
 using Translator_Project_Management.Repositories.Interfaces;
@@ -24,24 +25,19 @@ namespace Translator_Project_Management.Controllers
         public IActionResult Index()
         {
 			string userId = _userManager.GetUserId(this.User);
-			List<SourceLine> sourceLinesByFile = _userToSourceMappingRepository
-                                                                    .GetUserSourceLines(userId)
-                                                                    .ToList();
-            
-            List<UserTask> allUserTasks = new List<UserTask>();
-
-            foreach(SourceLine line in sourceLinesByFile)
-            {
-                UserTask taskVM = new UserTask()
-                {
-                    Source = line.Text,
-                    FileId = line.FileId,
-                    SourceId = line.Id
-
-                };
-
-                allUserTasks.Add(taskVM);
-			}
+            IEnumerable<TaskDetailsViewModel> allUserTasks = _userToSourceMappingRepository.GetUserSourceLineMappings(userId)
+                                                                .Include(m => m.SourceLine.File)
+                                                                .GroupBy(m => m.SourceLine.File.Name)
+                                                                .Select(sl => new TaskDetailsViewModel
+                                                                {
+                                                                    Name = sl.Key,
+                                                                    Tasks = sl.Select(m => new UserTask
+                                                                    {
+                                                                        Source = m.SourceLine.Text,
+                                                                        FileId = m.SourceLine.FileId,
+                                                                        SourceId = m.SourceLine.Id
+                                                                    }).ToList()
+                                                                });
 
             ViewData["AssignedTasks"] = allUserTasks;
 			return View();

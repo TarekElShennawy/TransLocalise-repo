@@ -27,18 +27,23 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var projectPresentation in (IEnumerable<ProjectDetailsViewModel>)ViewData["projects"])
+				@using (Html.BeginForm("SetLinesToUser", "Projects", FormMethod.Post))
+				{
+					<input type="hidden" id="selectedUserId" name="selectedUserId" value="" />
+
+				}
+				@foreach (var projectViewModel in (IEnumerable<ProjectDetailsViewModel>)ViewData["projects"])
 				{
 					<tr class="accordion-header center">
-						<th scope="row">@projectPresentation.Project.Name</th>
-						<td>@projectPresentation.Project.StartDate</td>
-						<td>@projectPresentation.Project.DueDate</td>
-						<td>@projectPresentation.Project.Status</td>
-						<td>@projectPresentation.Project.Description</td>
-						<td>@projectPresentation.Details.ClientName</td>
-						<td>@projectPresentation.Details.ManagerName</td>
+						<th scope="row">@projectViewModel.Project.Name</th>
+						<td>@projectViewModel.Project.StartDate</td>
+						<td>@projectViewModel.Project.DueDate</td>
+						<td>@projectViewModel.Project.Status</td>
+						<td>@projectViewModel.Project.Description</td>
+						<td>@projectViewModel.Project.Client.Name</td>
+						<td>@projectViewModel.Project.Manager.FirstName</td>
 						<td>
-							<button class="btn bg-transparent toggle-button" data-bs-target="#collapse-id-@projectPresentation.Project.Id" role="button">
+							<button class="btn bg-transparent toggle-button" data-bs-target="#collapse-id-@projectViewModel.Project.Id" role="button">
 								<i class="bi bi-eye"></i>
 							</button>
 						</td>
@@ -48,7 +53,7 @@
 							</button>
 						</td>
 						<td>
-							<button type="button" class="btn bg-transparent" data-bs-toggle="modal" data-bs-target="#myModal" onclick="setProjectIdInModal('@projectPresentation.Project.Id')">
+							<button type="button" class="btn bg-transparent" data-bs-toggle="modal" data-bs-target="#myModal" onclick="setProjectIdInModal('@projectViewModel.Project.Id')">
 								<i class="bi bi-trash"></i>
 							</button>
 							<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -76,16 +81,16 @@
 						</td>
 					</tr>
 
-					<tr id="collapse-id-@projectPresentation.Project.Id" class="collapse">
+					<tr id="collapse-id-@projectViewModel.Project.Id" class="collapse">
 						<td colspan="10">
 							<div>
 								<p>Select a user:</p>
-								@Html.DropDownList("selectedUser", (SelectList)ViewData["users"], new { @class = "form-control", onchange = "updateSelectedUserId(this.value)" })
+								@Html.DropDownList("selectedUser", (SelectList)ViewData["users"], new { @class = "form-control" })
 							</div>
 							<br />
 
 							<p>Files included:</p>
-							@foreach (var file in (@projectPresentation.Details.Files))
+							@foreach (var file in @projectViewModel.Details.Files)
 							{
 								<div class="accordion-collapse">
 									<div class="container">
@@ -94,10 +99,10 @@
 												<p>@file.Name</p>
 											</div>
 											<div class="col">
-												<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linesModal">
+												<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linesModal-@file.Id">
 													View Lines
 												</button>
-												<div class="modal fade" id="linesModal" tabindex="-1" aria-labelledby="linesModalLabel" aria-hidden="true">
+												<div class="modal fade" id="linesModal-@file.Id" tabindex="-1" aria-labelledby="linesModalLabel-@file.Id" aria-hidden="true">
 													<div class="modal-dialog">
 														<div class="modal-content">
 															<div class="modal-header">
@@ -134,10 +139,11 @@
 												</div>
 											</div>
 											<div class="col">
-												<form enctype="multipart/form-data" asp-action="SetLinesToUser" method="post">
-													<input type="hidden" id="selectedUserId" name="selectedUserId" value="" />
+												<button type="submit" class="btn btn-primary" data-form-id="setFileForm-@file.Id">
+													Set File
+												</button>
+												<form id="setFileForm-@file.Id" enctype="multipart/form-data" asp-action="SetLinesToUser" method="post" style="display: none;">
 													<input type="hidden" name="fileId" value="@file.Id" />
-													<button type="submit" class="btn btn-secondary">Set File</button>
 												</form>
 											</div>
 											<div class="col">
@@ -155,7 +161,7 @@
 									<div class="container">
 										<div class="row">
 											<div class="col">
-												<input type="hidden" name="projectid" value="@projectPresentation.Project.Id" />
+												<input type="hidden" name="projectid" value="@projectViewModel.Project.Id" />
 												<input type="file" name="file" />
 											</div>
 											<div class="col">
