@@ -3,7 +3,7 @@ using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Localisation;
 using Translator_Project_Management.Repositories.Interfaces;
 
-namespace Translator_Project_Management.Importers.XML
+namespace Translator_Project_Management.Importers.JSON
 {
 	public class JSONImporter : ImporterBaseClass
 	{

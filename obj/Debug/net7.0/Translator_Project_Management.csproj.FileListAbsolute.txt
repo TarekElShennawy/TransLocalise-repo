@@ -290,3 +290,6 @@ C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Man
 C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\runtimes\win-x64\native\k5sprt64.dll
 C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\runtimes\win-x64\native\krb5_64.dll
 C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\runtimes\win-x64\native\krbcc64.dll
+C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\MimeKit.dll
+C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\Tarek\source\repos\Translator_Project_Management\Translator_Project_Management\bin\Debug\net7.0\runtimes\win\lib\net7.0\System.Security.Cryptography.Pkcs.dll

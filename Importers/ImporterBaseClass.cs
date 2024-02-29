@@ -1,5 +1,4 @@
-﻿using Translator_Project_Management.Database;
-using Translator_Project_Management.Models.Database;
+﻿using Translator_Project_Management.Models.Database;
 using Translator_Project_Management.Models.Localisation;
 using Translator_Project_Management.Repositories.Interfaces;
 
@@ -23,12 +22,7 @@ namespace Translator_Project_Management.Importers
 			_translationRepository = translationRepository;
 		}
 
-		public abstract LocFile ParseFile(IFormFile file);
-
-		public void Dispose()
-		{
-			GC.SuppressFinalize(this);
-		}
+		public abstract LocFile ParseFile(IFormFile file);		
 
 		public bool IsValidImporter(IFormFile file)
 		{
@@ -95,6 +89,11 @@ namespace Translator_Project_Management.Importers
 			{
 				throw;
 			}
+		}
+
+		public void Dispose()
+		{
+			GC.SuppressFinalize(this);
 		}
 	}
 }

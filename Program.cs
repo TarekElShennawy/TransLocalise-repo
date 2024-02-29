@@ -1,18 +1,24 @@
 using Translator_Project_Management.Database;
 using Translator_Project_Management.Importers;
 using Translator_Project_Management.Importers.XML;
+using Translator_Project_Management.Importers.JSON;
 using Translator_Project_Management.Repositories;
 using Translator_Project_Management.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Translator_Project_Management.Models.Database;
 using Microsoft.AspNetCore.Identity;
+using Translator_Project_Management.Exporters;
+using Translator_Project_Management.Exporters.JSON;
+using Translator_Project_Management.Exporters.XLIFF;
+using Translator_Project_Management.Services;
+using IEmailSender = Translator_Project_Management.Services.Interfaces.IEmailSender;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
 	.AddJsonFile("appsettings.json")
 	.Build();
 
-var connectionString = configuration.GetConnectionString("MySqlDatabase") ?? throw new InvalidOperationException("Connection string 'LocDbContextConnection' not found.");
+string connectionString = configuration.GetConnectionString("MySqlDatabase") ?? throw new InvalidOperationException("Connection string 'LocDbContextConnection' not found.");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -46,6 +52,22 @@ builder.Services.AddTransient<IUserSourceLineMappingRepository, UserSourceLineMa
 //Importer services
 builder.Services.AddTransient<IImporter, XLIFFImporter>();
 builder.Services.AddTransient<IImporter, JSONImporter>();
+
+//Exporter services
+builder.Services.AddTransient<IExporter, JSONExporter>();
+builder.Services.AddTransient<IExporter, XliffExporter>();
+
+//File import and export services
+builder.Services.AddTransient<FileImportService>();
+builder.Services.AddTransient<FileExportService>();
+
+//Email service configuration with DI
+builder.Services.AddTransient<IEmailSender>(provider =>
+{
+    var senderEmail = configuration.GetValue<string>("EmailService:Email");
+    var senderPassword = configuration.GetValue<string>("EmailService:Password");
+	return new EmailSender(senderEmail, senderPassword);
+});
 
 var app = builder.Build();
 

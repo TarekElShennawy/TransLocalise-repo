@@ -1,12 +1,32 @@
 ﻿window.onload = function () {
-	var userSelect = document.getElementById("selectedUser");
+	//Get create project button
+	const createProjectButton = document.getElementById("createProjectButton");
 
-	///check if user selections exist
-	if (userSelect.options.length > 0) {
-		//If so, set the selected Id as the first value until changed
-		updateSelectedUserId(userSelect.options[0].value)
-	}
+	//Onclick redirect user to create project view
+	createProjectButton.addEventListener("click", function () {
+		const url = this.dataset.projectCreateUrl;
+
+		window.location.href = url;
+	});
+
+	//Getting delete buttons
+	const deleteButtons = document.querySelectorAll(".deleteButton");
+
+	//Onclick the projectId is passed to the modal form to delete when user confirms deletion.
+	deleteButtons.forEach(button => {
+		button.addEventListener("click", function () {
+			const projectId = this.dataset.projectId;
+			setProjectIdInModal(projectId);
+		})		
+	})
 };
+
+//Setting auto-hide for the bootstrap alert
+window.setTimeout(function () {
+	$(".alert").fadeTo(500, 0).slideUp(500, function () { //slowly fade the alert as it slides up
+		$(this).remove(); //Then finally remove it completely.
+	})
+}, 4000);
 
 //Getting the "View projects" buttons
 const toggleButtons = document.querySelectorAll('.toggle-button');
@@ -20,10 +40,5 @@ toggleButtons.forEach(button => {
 });
 
 function setProjectIdInModal(projectId) {
-	$('#myModal input[name="projectId"]').val(projectId);
-}
-
-//Updating the selectedUserId input based on dropdown selection
-function updateSelectedUserId(userId) {
-	document.getElementById("selectedUserId").value = userId;
+	$('#deleteModal input[name="projectId"]').val(projectId);
 }

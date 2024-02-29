@@ -1,5 +1,4 @@
-﻿@using Translator_Project_Management.Models.Presentation;
-@model IEnumerable<ProjectDetailsViewModel>
+﻿@model Translator_Project_Management.Models.Presentation.ProjectsViewModel
 @{
 	ViewData["Title"] = "Projects";
 }
@@ -11,173 +10,202 @@
 </head>
 
 <body>
+	@if (TempData["AlertMessage"] != null && TempData["AlertClass"] != null)
+	{
+		<div class="alert @TempData["AlertClass"]" role="alert">
+		@TempData["AlertMessage"]
+		<button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	}
+
 	<div>
 		<table class="table table-condensed table-hover">
-			<thead>
-				<tr class="bg-light">
-					<td scope="col">Name</td>
-					<td scope="col">Start Date</td>
-					<td scope="col">Due Date</td>
-					<td scope="col">Status</td>
-					<td scope="col">Description</td>
-					<td scope="col">Client</td>
-					<td scope="col">Manager</td>
-					<td scope="col" class="text-center" colspan="3">Actions</td>
+		<thead>
+			<tr class="bg-light">
+				<td scope="col">Name</td>
+				<td scope="col">Start Date</td>
+				<td scope="col">Due Date</td>
+				<td scope="col">Status</td>
+				<td scope="col">Description</td>
+				<td scope="col">Client</td>
+				<td scope="col">Manager</td>
+				<td scope="col" class="text-center" colspan="3">Actions</td>
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var projectViewModel in Model.Details)
+			{
+				<tr class="accordion-header center">
+					<th scope="row">@projectViewModel.Project.Name</th>
+					<td>@projectViewModel.Project.StartDate</td>
+					<td>@projectViewModel.Project.DueDate</td>
+					<td>@projectViewModel.Project.Status</td>
+					<td>@projectViewModel.Project.Description</td>
+					<td>@projectViewModel.Project.Client.Name</td>
+					<td>@projectViewModel.Project.Manager.FirstName</td>
+					<td>
+						<button class="btn bg-transparent toggle-button" data-bs-target="#collapse-id-@projectViewModel.Project.Id" role="button">
+							<i class="bi bi-eye"></i>
+						</button>
 					</td>
-				</tr>
-			</thead>
-			<tbody>
-				@using (Html.BeginForm("SetLinesToUser", "Projects", FormMethod.Post))
-				{
-					<input type="hidden" id="selectedUserId" name="selectedUserId" value="" />
-
-				}
-				@foreach (var projectViewModel in (IEnumerable<ProjectDetailsViewModel>)ViewData["projects"])
-				{
-					<tr class="accordion-header center">
-						<th scope="row">@projectViewModel.Project.Name</th>
-						<td>@projectViewModel.Project.StartDate</td>
-						<td>@projectViewModel.Project.DueDate</td>
-						<td>@projectViewModel.Project.Status</td>
-						<td>@projectViewModel.Project.Description</td>
-						<td>@projectViewModel.Project.Client.Name</td>
-						<td>@projectViewModel.Project.Manager.FirstName</td>
-						<td>
-							<button class="btn bg-transparent toggle-button" data-bs-target="#collapse-id-@projectViewModel.Project.Id" role="button">
-								<i class="bi bi-eye"></i>
-							</button>
-						</td>
-						<td>
-							<button class="btn bg-transparent">
-								<i class="bi bi-pencil"></i>
-							</button>
-						</td>
-						<td>
-							<button type="button" class="btn bg-transparent" data-bs-toggle="modal" data-bs-target="#myModal" onclick="setProjectIdInModal('@projectViewModel.Project.Id')">
-								<i class="bi bi-trash"></i>
-							</button>
-							<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="myModalLabel">Are you sure you want to delete the project?</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-										</div>
-										<div class="modal-body">
-											<b>This will delete the project and any of its' associated files.</b>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-											@using (Html.BeginForm("Delete", "Projects", FormMethod.Post))
-											{
-												<input type="hidden" name="projectId" id="projectId" value="">
-												<button type="submit" class="btn btn-danger" name="projectId">Delete</button>
-											}
-										</div>
+					<td>
+						<button class="btn bg-transparent">
+							<i class="bi bi-pencil"></i>
+						</button>
+					</td>
+					<td>
+						<button type="button" class="deleteButton btn bg-transparent" id="deleteButton" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="@projectViewModel.Project.Id">
+							<i class="bi bi-trash"></i>
+						</button>
+						<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="myModalLabel">Are you sure you want to delete the project?</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<b>This will delete the project and any of its' associated files.</b>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										@using (Html.BeginForm("Delete", "Projects", FormMethod.Post))
+										{
+											<input type="hidden" name="projectId" id="projectId" value="">
+											<button type="submit" class="btn btn-danger" name="projectId">Delete</button>
+										}
 									</div>
 								</div>
 							</div>
+						</div>	
 
-						</td>
-					</tr>
+					</td>
+				</tr>
 
-					<tr id="collapse-id-@projectViewModel.Project.Id" class="collapse">
-						<td colspan="10">
-							<div>
-								<p>Select a user:</p>
-								@Html.DropDownList("selectedUser", (SelectList)ViewData["users"], new { @class = "form-control" })
-							</div>
-							<br />
+				<tr id="collapse-id-@projectViewModel.Project.Id" class="collapse">
+					<td colspan="10">
 
-							<p>Files included:</p>
-							@foreach (var file in @projectViewModel.Details.Files)
-							{
-								<div class="accordion-collapse">
-									<div class="container">
-										<div class="row">
-											<div class="col">
-												<p>@file.Name</p>
+						<p>Files included:</p>
+						@foreach (var file in @projectViewModel.Project.Files)
+						{
+							<div class="accordion-collapse">
+								<div class="container">
+									<div class="row">
+									<div class="col">
+										<p>@file.Name</p>
+									</div>
+									<div class="col">
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linesModal-@file.Id">
+										View Lines
+									</button>
+									<div class="modal fade" id="linesModal-@file.Id" tabindex="-1" aria-labelledby="linesModalLabel-@file.Id" aria-hidden="true">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="linesModalLabel">Source lines</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+												</div>
+												<div class="modal-body">
+													<table>
+													<tbody>
+														@if(@file.SourceLines != null)
+														{
+															@foreach (var line in (@file.SourceLines))
+															{
+																<tr>
+																	<td>
+																		@line.Text
+																	</td>
+																</tr>
+															}
+														}
+														else
+														{
+															<p>There are no lines within this file.</p>
+														}
+													</tbody>
+													</table>
+												</div>															
+												<div class="modal-footer">
+													<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Set lines</button>
+													<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+												</div>
 											</div>
+										</div>
+									</div>
+									</div>											
+										@{
+											List<int> sourceLineIds = new List<int>();
+											if (@file.SourceLines != null)
+											{
+												foreach (var line in (@file.SourceLines))
+												{
+													// Add line ID to the list
+													sourceLineIds.Add(line.Id);
+												}
+											}
 											<div class="col">
-												<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#linesModal-@file.Id">
-													View Lines
-												</button>
-												<div class="modal fade" id="linesModal-@file.Id" tabindex="-1" aria-labelledby="linesModalLabel-@file.Id" aria-hidden="true">
-													<div class="modal-dialog">
-														<div class="modal-content">
-															<div class="modal-header">
-																<h5 class="modal-title" id="linesModalLabel">Source lines</h5>
-																<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-															</div>
-															<div class="modal-body">
-																<table>
-																	<tbody>
-																		@if(@file.SourceLines != null)
-																		{
-																			@foreach (var line in (@file.SourceLines))
-																			{
-																				<tr>
-																					<td>
-																						@line.Text
-																					</td>
-																				</tr>
-																			}
-																		}
-																		else
-																		{
-																			<p>There are no lines within this file.</p>
-																		}
-																	</tbody>
-																</table>
-															</div>															
-															<div class="modal-footer">
-																<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Set lines</button>
-																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-															</div>
+												@using(Html.BeginForm("SetLinesToUser", "Projects", FormMethod.Post))
+												{
+												<div class="container">
+														
+													<div class="row">
+														<div class="col">
+															@Html.DropDownListFor(model => model.SetLines.SelectedUserId, Model.SetLines.UserSelections, "Select User", new { @class = "form-control"})
+														</div>
+														
+														<div class="col">
+															<input type="hidden" id="sourceLineIds" name="SetLines.SourceLineIds" value="@string.Join(",", sourceLineIds)">
+															<button type="submit" class="btn btn-primary">Set File</button>
 														</div>
 													</div>
 												</div>
+												}
 											</div>
-											<div class="col">
-												<button type="submit" class="btn btn-primary" data-form-id="setFileForm-@file.Id">
-													Set File
-												</button>
-												<form id="setFileForm-@file.Id" enctype="multipart/form-data" asp-action="SetLinesToUser" method="post" style="display: none;">
-													<input type="hidden" name="fileId" value="@file.Id" />
-												</form>
-											</div>
-											<div class="col">
-												<form enctype="multipart/form-data" asp-action="DeleteFile" method="post">
-													<input type="hidden" name="fileId" value="@file.Id" />
-													<button type="submit" class="btn btn-danger">Delete</button>
-												</form>
-											</div>
+										}
+										<div class="col">
+											@using(Html.BeginForm("ExportFile", "Projects", FormMethod.Post))
+											{
+												<input type="hidden" name="ExportFile.FileId" value="@file.Id">
+												<button class="btn btn-primary"type="submit">Export file</button>
+											}
+										</div>
+										<div class="col">
+											@using(Html.BeginForm("DeleteFile", "Projects", FormMethod.Post))
+											{
+												<input type="hidden" name="fileId" value="@file.Id" />
+												<button type="submit" class="btn btn-danger">Delete</button>
+											}			
 										</div>
 									</div>
 								</div>
-							}
-							<div>
-								<form enctype="multipart/form-data" asp-action="AddFile" method="post">
-									<div class="container">
-										<div class="row">
-											<div class="col">
-												<input type="hidden" name="projectid" value="@projectViewModel.Project.Id" />
-												<input type="file" name="file" />
-											</div>
-											<div class="col">
-												<button type="submit" class="btn btn-primary">Upload file</button>
-											</div>
+							</div>
+						}
+						<br />
+
+						<div>
+							<form enctype="multipart/form-data" asp-action="AddFile" method="post">
+								<div class="container">
+									<div class="row">
+										<div class="col">
+											<input type="hidden" name="projectid" value="@projectViewModel.Project.Id" />
+											<input type="file" name="file" />
+										</div>
+										<div class="col">
+											<button type="submit" class="btn btn-primary">Upload file</button>
 										</div>
 									</div>
-								</form>
-							</div>
-						</td>
-					</tr>
-				}
-			</tbody>
+								</div>
+							</form>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
 		</table>
 
-		<button type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("Create", "Projects")'">Create Project</button>
+		<button type="button" class="btn btn-primary" id="createProjectButton" data-project-create-url="@Url.Action("Create", "Projects")">Create Project</button>
 	</div>
 
 	<script src="~/js/ProjectDetails.js"></script>

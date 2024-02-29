@@ -32,8 +32,7 @@ namespace Translator_Project_Management.Importers.XML
 					using (MemoryStream memoryStream = new MemoryStream())
 					{
 						stream.CopyTo(memoryStream);
-						memoryStream.Position = 0;
-					
+						memoryStream.Position = 0;					
 
 						// Use the XDocument object to parse the XML content
 						XDocument doc = XDocument.Load(memoryStream);						

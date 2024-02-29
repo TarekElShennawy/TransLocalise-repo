@@ -29,10 +29,8 @@ namespace Translator_Project_Management.Services
 
                     return true; //Indicate success
                 }
-                else
-                {
-                    return false; //No suitable importer found
-                }
+
+                return false; //No suitable importer found
             }
             catch (Exception ex)
             {
